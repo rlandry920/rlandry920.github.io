@@ -1,0 +1,55 @@
+/*Make the whole resume have a tan background*/
+:root{ 
+    background-color:rgb(240, 206, 161);
+}
+
+/*Affects banner at the top of the page
+has a blue background and helvetica font
+has a white border*/
+#page-banner{
+    position:fixed;
+    display:flex;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    top:0;
+    width: 100%;
+    min-height: 8em;
+    border: 3px solid rgb(255, 255, 255);
+    padding-bottom: 2em;
+    padding-top:1em;
+    padding-left: 1em;
+    padding-right: 1em;
+    background-color:rgb(42, 150, 238);
+    color:rgb(255, 255, 255);
+    font-family: "Helvetica";
+}
+
+/*Affects the main resume part and sections*/
+#main-resume{
+    padding-top: 12em;
+    margin-left:5em;
+    margin-right:5em;
+    font-family: "Garamond"
+}
+
+/*Affects all of the links to the sections of resume*/
+.resume-nav{
+    color:rgb(255, 255, 255);
+}
+
+/*Affects all of the subset headers for the resume sections*/
+h3{
+    font-size: 18px;
+}
+
+/*Affects all of the resume sections*/
+.resume-section:target{
+    scroll-margin-top: 12em;
+}
+
+/*Affects the image in the contact information*/
+#contact-photo{
+    float: left;
+    padding-right: 5em;
+}
