@@ -469,7 +469,7 @@ function draw() {
       if (truck.x > width / 2 + 100) {
         for (var i = 0; i < letters.length; i++) {
           if (
-            count % 6 == 0 &&
+            count % 3 == 0 &&
             count > frameRate() * 3.4 &&
             !doneFloating &&
             !gameStart
