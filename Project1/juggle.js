@@ -164,7 +164,7 @@ class Letter {
         this.nameCircles[i].x < bar.x + 105
       ) {
         paddle = true;
-      } else if (this.nameCircles[i].y > height - 5) {
+      } else if (this.nameCircles[i].y > bar.y - 5) {
         //If it hits the bottom, end game
         gameOver = true;
         count = 0;
@@ -338,13 +338,13 @@ class Bar {
 
   moveLeft() {
     if (this.x > 0) {
-      this.x -= 3;
+      this.x -= 5;
     }
   }
 
   moveRight() {
     if (this.x < width - 100) {
-      this.x += 3;
+      this.x += 5;
     }
   }
 }
@@ -469,7 +469,7 @@ function draw() {
       if (truck.x > width / 2 + 100) {
         for (var i = 0; i < letters.length; i++) {
           if (
-            count % 6 == 0 &&
+            count % 3 == 0 &&
             count > frameRate() * 3.4 &&
             !doneFloating &&
             !gameStart

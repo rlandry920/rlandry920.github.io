@@ -314,7 +314,7 @@ function draw() {
         //Have circles appear and float to form name
         if (truck.x > width / 2 + 100) {
             for (var i = 0; i < nameCircles.length; i++) {
-                if (count % 6 == 0 && count > frameRate() * 3.4) {
+                if (count % 3 == 0 && count > frameRate() * 3.4) {
                     nameCircles[i].float();
                 }
                 nameCircles[i].draw();
