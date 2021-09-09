@@ -170,10 +170,10 @@ class Letter {
         count = 0;
       }
       //If it hits one of the sides
-      if (this.nameCircles[i].x < -5 || this.nameCircles[i].x > width + 5) {
+      if (this.nameCircles[i].x < 5 || this.nameCircles[i].x > width - 5) {
         horizontal = true;
       }
-      if (this.nameCircles[i].y < -5) {
+      if (this.nameCircles[i].y < 5) {
         top = true;
       }
     }
@@ -326,22 +326,26 @@ class Dog {
   }
 }
 
+//This class represents the paddle that the user will use to hit the letters
 class Bar {
   constructor(x, y) {
     this.x = x;
     this.y = y;
   }
 
+  //The paddle is 100 pixels in width
   draw() {
     rect(this.x, this.y, 100, 20);
   }
 
+  //When the user hits the left arrow key, the paddle will move left 5 pixels
   moveLeft() {
     if (this.x > 0) {
       this.x -= 5;
     }
   }
 
+  //When the user hits the right arrow key, the paddle with move right 5 pixels
   moveRight() {
     if (this.x < width - 100) {
       this.x += 5;
@@ -506,17 +510,17 @@ function draw() {
     //Draw replay button
     fill(255, 112, 52);
     rect(width / 2 - 70, height / 3 + 85, 140, 50, 10);
-    //Show text with score
     fill(255);
-    textSize(50);
+    //Show text with score
     textAlign(CENTER);
-    textStyle(BOLD);
-    text("YOU WIN", width / 2, height / 3);
     textStyle(NORMAL);
     textSize(30);
-
-    text("SCORE: " + score, width / 2, height / 3 + 40);
     text("REPLAY", width / 2, height / 3 + 120);
+    textStyle(BOLD);
+    fill(grass);
+    text("SCORE: " + score, width / 2, height / 3 + 40);
+    textSize(50);
+    text("YOU WIN", width / 2, height / 3);
   } else {
     //If user loses
     background(0);
@@ -525,13 +529,14 @@ function draw() {
     rect(width / 2 - 70, height / 3 + 85, 140, 50, 10);
     fill(255);
     //Show text with score
-    textSize(50);
     textAlign(CENTER);
-    textStyle(BOLD);
-    text("GAME OVER", width / 2, height / 3);
     textStyle(NORMAL);
     textSize(30);
-    text("SCORE: " + score, width / 2, height / 3 + 40);
     text("REPLAY", width / 2, height / 3 + 120);
+    textStyle(BOLD);
+    fill(255, 0, 0);
+    text("SCORE: " + score, width / 2, height / 3 + 40);
+    textSize(50);
+    text("GAME OVER", width / 2, height / 3);
   }
 }
