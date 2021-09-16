@@ -71,7 +71,7 @@ var enemies;
 var hitEnemy;
 
 function preload() {
-  fontRegular = loadFont("url(https://rlandry920.github.io/assets/webfonts/air_mitalic.ttf)");
+  fontRegular = loadFont("../assets/webfonts/air_mitalic.ttf");
 }
 
 function initTilemap() {
@@ -101,13 +101,12 @@ function initTilemap() {
 }
 
 function setup() {
-  print("SETTING UP");
   images = [];
   score = 0;
   animationCount = 0;
   gameScreenCount = 0;
   timer = 0;
-  gameStart = true;
+  gameStart = false;
   showIntro = false;
   stillPlaying = true;
   replay = false;
@@ -139,7 +138,10 @@ function setup() {
 function mouseClicked() {
   var xCor = mouseX;
   var yCor = mouseY;
-  if (showIntro) {
+  if (showIntro && xCor >= 0 &&
+    xCor <= width &&
+    yCor >= 0 &&
+    yCor < height) {
     gameStart = true;
   }
   if (
