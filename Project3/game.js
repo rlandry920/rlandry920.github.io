@@ -1,49 +1,49 @@
 //Variable representing the map of tiles and walls
 var tilemap = [
-  "wwwwwwwwwwwwwwwwwwww",
-  "wbbbbbbbbbbbbbbbbbbw",
-  "wbbbbbbbbbbbbbbbbbbw",
-  "wbbbwwwwbbbbbbbbbbbw",
-  "wbbbbbbbbbbbbbbbbbbw",
-  "wbbbbbbbbbwbbbbbbbbw",
-  "wbbbbbbbbbwbbbbbbbbw",
-  "wbbbbbbbbbwbbbbbbbbw",
-  "wbbbbbbbbbbbbbbbbbbw",
-  "wbbbbbbbbbbbbbbbbbbw",
-  "wbbbbbbbbbbbbbbbbbbw",
-  "wbbbbbbbbbbbbbbbwwww",
-  "wbbbbbbbbbbbbbbbbbbw",
-  "wbbbbbbbbbbbbbbbbbbw",
-  "wwwwwbbbbbbbwbbbbbbw",
-  "wbbbbbbbbbbbwbbbbbbw",
-  "wbbbbbbbbbbbwbbbbbbw",
-  "wbbbbbbbbbbbwbbbbbbw",
-  "wbbbbbbbbbbbwbbbbbbw",
-  "wwwwwwwwwwwwwwwwwwww",
+  "wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww",
+  "wbbbbwbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbwbbbbbbbbbbbbbbbbbbw",
+  "wbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbwbbbbbbbbwbbbw",
+  "wbbbbbbbbbbwbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbw",
+  "wbbbbbbbbbbbbbbbbbbbbbwbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbw",
+  "wbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbw",
+  "wbbbbwbbbbbbbbbbbbbbbbbbbbwbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbw",
+  "wbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbwbbbbbbbbbbbbbbbbbbbbbbw",
+  "wbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbwbbbbbbw",
+  "wwbbbbbbbbbbbbbbbbwbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbw",
+  "wbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbw",
+  "wbbbbbbbwbbbbbbbbbbbbbbbbbwbbbbbbbbbbbwbbbbbbbbbbbwbbbbbbbbw",
+  "wbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbw",
+  "wbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbw",
+  "wbbbbbbwbbbbbbbbbbbbbbbbbbbwbbbbbbbbbbbbbbbbbbbbwbbbbbbbbbbw",
+  "wbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbwbbbbbbbbbbbbbbbbbbbbbbbbbbw",
+  "wbbbbbbbbbbbbbbwbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbw",
+  "wbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbw",
+  "wbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbw",
+  "wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww",
 ];
 
 //Variable representing the map of prizes and enemies
-var cupmap = [
-  "                    ",
-  "      c             ",
-  "  v              vc ",
-  "  c         c       ",
-  "        v           ",
-  "     c           c  ",
-  "         c      h   ",
-  "  c                 ",
-  "       c     c      ",
-  "                c   ",
-  "                    ",
-  "         c          ",
-  "    c            c   ",
-  "                    ",
-  "      c       c     ",
-  "                    ",
-  " c       c        h ",
-  "     c            c ",
-  "                    ",
-  "                    ",
+var tilemap2 = [
+  "                                                            ",
+  "                                                            ",
+  "         e       c                  c            e          ",
+  "                             e                              ",
+  "    c                                       c         e     ",
+  "                     e            c    e                    ",
+  "                                                  c         ",
+  "            c                c             e                ",
+  "                         e                           c      ",
+  "   e                                    c                 e ",
+  "                      c                             e       ",
+  "   c                        e                               ",
+  "           c                      e   c                     ",
+  "                                             e              ",
+  "         c            e                             c       ",
+  "                              c         e                   ",
+  "     c           e                                          ",
+  "                      c         e             c       e     ",
+  "   e                                                        ",
+  "                                                            "
 ];
 
 //Declar variables
@@ -72,7 +72,9 @@ var height3;
 var y1;
 var drawLetsGo;
 var enemies;
-var hitEnemy;
+var fireCounter;
+var dieCounter;
+var mapX;
 
 //Load in custom font
 function preload() {
@@ -91,15 +93,12 @@ function initTilemap() {
           walls.push(new wallObj(j * 20, i * 20));
           break;
       }
-      switch (cupmap[i][j]) {
+      switch (tilemap2[i][j]) {
         case "c"://If its a cup
           cups.push(new cupObj(j * 20, i * 20));
           break;
-        case "h"://If its a horizontal enemy
-          enemies.push(new enemyObj(j * 20, i * 20, "h"));
-          break;
-        case "v"://If its a vertical enemy
-          enemies.push(new enemyObj(j * 20, i * 20, "v"));
+        case "e":
+          enemies.push(new enemyObj(j * 20, i * 20));
           break;
       }
     }
@@ -131,7 +130,14 @@ function setup() {
   height3 = 0;
   y1 = 400;
   drawLetsGo = false;
-  hitEnemy = false;
+  dieCounter = 0;
+  fireCounter = 0;
+  activeBullets = [];
+  bulletBank = [];
+  for (var i = 0; i <20; i++){
+    bulletBank.push(new JellybeanObj(0,0,0));
+  }
+  
 
   createCanvas(400, 400);
   initTilemap();
@@ -142,6 +148,7 @@ function setup() {
   //Make the player
   player = new Player(200, 200);
   players.push(player);
+  mapX = player.x;
 }
 
 function mouseClicked() {
@@ -194,23 +201,47 @@ function draw() {
     stillPlaying = false;
   }
   //End game if user hits enemy
-  if (hitEnemy) {
-    drawGameOver();
+  if (player.dead) {
+    dieCounter++
+    if(dieCounter < 60){
+      player.angle += PI/20;
+    }
+    else if(player.y < height +50 ){
+      player.y +=10
+    }
+    else{
+      drawGameOver();
+    }
     stillPlaying = false;
   }
 }
 
 //Move player based on arrow keys
 function movePlayer() {
+  fireCounter--;
   if (keyIsDown(LEFT_ARROW)) {
-    player.moveLeft();
+    player.rotateCounterClockwise();
   } else if (keyIsDown(RIGHT_ARROW)) {
-    player.moveRight();
-  } else if (keyIsDown(UP_ARROW)) {
-    player.moveUp();
+    player.rotateClockwise();
+  } if (keyIsDown(UP_ARROW)) {
+    player.moveForward();
   } else if (keyIsDown(DOWN_ARROW)) {
-    player.moveDown();
+    player.moveBackward();
   }
+  if(keyIsDown(32) && fireCounter < 0){
+      var newBullet = findFreeBullet();
+      newBullet.fire(player.x, player.y, player.angle);
+      fireCounter = 20
+  }
+}
+
+function findFreeBullet(){
+  for (var i = 0; i < bulletBank.length; i++){
+    if(!bulletBank[i].active){
+      return bulletBank[i];
+    }
+  }
+  return null;
 }
 
 //Draw win screen
@@ -377,20 +408,27 @@ function drawStartScreen() {
   textSize(blastedSize);
   text("BLASTED", 50, 150);
   textSize(30);
-  text("Collect all 20       to win", 50, 250);
-  text("Avoid all enemies", 50, 300);
+  text("Collect all 20       to win", 50, 200);
+  text("Avoid all enemies", 50, 250);
+  text("Press spacebar to shoot", 50, 300)
   text("Press mouse to begin game", 50, 370);
-  let enemy = new enemyObj(270, 285);
+  let enemy = new enemyObj(270, 235);
   enemy.draw();
-  push();
-  rotate(PI / 6);
-  image(images[0], 314, 40, 100, 80);
-  pop();
+  let bullet = new JellybeanObj(340, 290, 0);
+  bullet.draw();
+  image(images[0], 230, 150, 100, 80);
 }
 
 //Draw games
 function drawGame() {
+  push();
   rectMode(CORNER);
+  if(mapX > 1000){
+    translate(-800, 0);
+  }
+  else if(mapX>200){
+  translate(200-mapX, 0);
+  }
 
   //Draw tiles
   for (var i = 0; i < tiles.length; i++) {
@@ -409,19 +447,30 @@ function drawGame() {
   }
   //Draw enemies and move them
   for (i = 0; i < enemies.length; i++) {
+    if(!enemies[i].hit){
     if (stillPlaying) {
       enemies[i].move();
       enemies[i].checkHit();
     }
     enemies[i].draw();
+    }
+  }
+  for (i = 0; i < bulletBank.length; i++) {
+    if(bulletBank[i].active){
+      bulletBank[i].draw();
+      bulletBank[i].move();
+    }
+
   }
   player.draw();
+  pop();
   stroke(0);
-  rect(290, 5, 100, 10);
+  noFill();
+  rect(280, 5, 108, 10);
   fill(120, 222, 191);
   stroke(120, 222, 191);
   //Draw bar to show score progress
   if (score != 0) {
-    rect(291, 6, score * 5, 8);
+    rect(284, 8, score * 5, 4);
   }
 }

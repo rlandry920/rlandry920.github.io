@@ -1,3 +1,4 @@
+//This class represents the user's player.
 class Player {
   constructor(x, y) {
     this.x = x;
@@ -42,52 +43,59 @@ class Player {
     );
   }
 
+  //Move the user left at its given speed and change directions if it hits a wall
   moveLeft() {
     this.x -= this.speed;
     for (var i = 0; i < walls.length; i++) {
       if (
         this.x - walls[i].x > 0 &&
         this.x - walls[i].x < 35 &&
-        this.y > walls[i].y-10 &&
+        this.y > walls[i].y - 10 &&
         this.y < walls[i].y + 38
       ) {
         this.x += 8;
       }
     }
   }
+
+  //Move the user right at its given speed and change directions if it hits a wall
   moveRight() {
     this.x += this.speed;
     for (var i = 0; i < walls.length; i++) {
       if (
         this.x < walls[i].x &&
         walls[i].x - this.x < 15 &&
-        this.y > walls[i].y-10 &&
+        this.y > walls[i].y - 10 &&
         this.y < walls[i].y + 30
       ) {
         this.x -= 8;
       }
     }
   }
+
+  //Move the user up at its given speed and change directions if it hits a wall
   moveUp() {
     this.y -= this.speed;
     for (var i = 0; i < walls.length; i++) {
       if (
         this.y - walls[i].y > 0 &&
         this.y - walls[i].y < 40 &&
-        this.x > walls[i].x-10 &&
+        this.x > walls[i].x - 10 &&
         this.x < walls[i].x + 30
       ) {
         this.y += 8;
       }
     }
   }
+
+  //Move the user down at its given speed and change directions if it hits a wall
   moveDown() {
     this.y += this.speed;
     for (var i = 0; i < walls.length; i++) {
       if (
         walls[i].y - this.y > 0 &&
         walls[i].y - this.y < 15 &&
-        this.x > walls[i].x-10 &&
+        this.x > walls[i].x - 10 &&
         this.x < walls[i].x + 30
       ) {
         this.y -= 8;
