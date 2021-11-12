@@ -1,3 +1,4 @@
+//Represents snowflake that fall in winter
 class snowflake {
   constructor(x, y) {
     this.x = x;

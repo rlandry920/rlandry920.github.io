@@ -1,6 +1,9 @@
+//This class represents the brown bear character
 class brownBear {
   constructor(x, y) {
     this.position = new p5.Vector(x, y);
+        //Change appearance based on which was it's moving
+
     this.movingRight = false;
     this.movingLeft = false;
     this.rightArmAngle = PI / 8;
@@ -22,24 +25,35 @@ class brownBear {
   //Move based on forces being applied
   update() {
     this.acceleration.set(0, 0);
+    //Walk right
     if (this.walkRight === 1) {
       this.velocity.x = walkForce.x;
     }
+    //Walk left
     if (this.walkLeft === 1) {
       this.velocity.x = backForce.x;
     }
+    //Stop walking
     if (this.walkRight === 0 && this.walkLeft == 0) {
       this.velocity.x = 0;
     }
+    //Jump
     if (this.jump === 2) {
       this.applyForce(jumpForce);
       this.jump = 1;
     }
+    //Fall
     if (this.jump > 0) {
       this.applyForce(gravity);
     }
     this.velocity.add(this.acceleration);
     this.position.add(this.velocity);
+    if(this.position.x < 20){
+      this.position.x += 5;
+    }else if(this.position.x > width-20){
+            this.position.x -= 5;
+
+    }
     this.acceleration.set(0, 0);
   }
 
@@ -268,6 +282,41 @@ class brownBear {
         this.position.x + 8,
         this.position.y - 2
       );
+    }
+  }
+  
+    //Check to see if the player has hit any walls to the left or right
+  //Also check to see if player is standing on a block
+  checkWalls() {
+        var standing = false;
+
+    for (var i = 0; i < blocks[currLevel].length; i++) {
+      if (
+        (blocks[currLevel][i].y +20) >= (this.position.y + 30) &&
+        ((blocks[currLevel][i].y) - (this.position.y + 30)) < 0.5 &&
+        abs(blocks[currLevel][i].x+40 - this.position.x) < 41
+      ) {
+        if (this.velocity.y >= 0) {
+          this.position.y = blocks[currLevel][i].y - 30;
+          this.velocity.y = 0;
+          this.jump = 0;
+          standing = true;
+        }
+      }
+      
+      if (
+        (blocks[currLevel][i].y +40) <= (this.position.y + 30) &&
+        ((this.position.y - 28)-(blocks[currLevel][i].y+40)) < 0.5 &&
+        abs(blocks[currLevel][i].x+40 - this.position.x) < 41
+      ) {
+        if (this.velocity.y <= 0) {
+          this.velocity.y = 0;
+        }
+      }
+    }
+    //If not standing on a log, rall
+    if (!standing) {
+      this.jump = 1;
     }
   }
 }

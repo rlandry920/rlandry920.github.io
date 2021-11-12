@@ -1,34 +1,29 @@
 class rabbit {
-  constructor(x, y) {
+  constructor(x, y, speed, minX, maxX) {
     this.position = new p5.Vector(x, y);
-    this.movingRight = false;
-    this.movingLeft = false;
-    this.rightArmAngle = PI / 8;
-    this.rightArmDir = 1;
-    this.leftArmAngle = PI / 8;
-    this.leftArmDir = 1;
-    this.velocity = new p5.Vector(0, 0);
-    this.acceleration = new p5.Vector(0, 0);
-    this.force = new p5.Vector(0, 0);
-    this.jump = 0;
-    this.walkRight = 0;
-    this.walkLeft = 0;
+    this.speed = speed;
+    this.minX = minX;
+    this.maxX = maxX;
+    //The timer insures that the user doesn't lose all 3 lives instantly
+    this.hitTimer = 0;
   }
 
   draw() {
     noStroke();
     fill(255);
-    rect(this.position.x-8, this.position.y+32, 8, 15, 5)
-        rect(this.position.x+8, this.position.y+32, 8, 15, 5)
-
-        ellipse(this.position.x, this.position.y+20, 25, 30)
+    //legs
+    rect(this.position.x - 8, this.position.y + 32, 8, 15, 5);
+    rect(this.position.x + 8, this.position.y + 32, 8, 15, 5);
+    //body
+    ellipse(this.position.x, this.position.y + 20, 25, 30);
     ellipse(this.position.x, this.position.y, 30, 25);
-    stroke(0)
-        rect(this.position.x-5, this.position.y+20, 5, 10, 5)
-        rect(this.position.x+5, this.position.y+20, 5, 10, 5)
-    noStroke()
-        rect(this.position.x, this.position.y+15, 20, 3)
-
+    stroke(0);
+    //arms
+    rect(this.position.x - 5, this.position.y + 20, 5, 10, 5);
+    rect(this.position.x + 5, this.position.y + 20, 5, 10, 5);
+    noStroke();
+    rect(this.position.x, this.position.y + 15, 20, 3);
+    //ears
     push();
     translate(this.position.x, this.position.y);
     rotate(-PI / 12);
@@ -47,18 +42,47 @@ class rabbit {
     ellipse(this.position.x + 5, this.position.y - 15, 5, 10);
     fill(255);
     pop();
+    //eyes
     fill(255, 0, 0);
     ellipse(this.position.x - 5, this.position.y - 5, 5, 5);
     ellipse(this.position.x + 5, this.position.y - 5, 5, 5);
+    //mouth
     arc(this.position.x, this.position.y + 4, 15, 10, 0, PI, PIE);
     fill(0);
+    //nose
     triangle(
       this.position.x + 3,
       this.position.y - 2,
       this.position.x - 3,
       this.position.y - 2,
       this.position.x,
-      this.position.y+2
+      this.position.y + 2
     );
+  }
+
+  //Move back and forth and change direction when hit max or min
+  move() {
+    this.position.x += this.speed;
+    if (this.position.x < this.minX || this.position.x > this.maxX) {
+      this.speed = -this.speed;
+    }
+  }
+
+  //Check to see if either player hit the rabbit
+  //If so, the user loses a life
+  checkHit() {
+    if (this.hitTimer > 0) {
+      this.hitTimer--;
+    }
+    if (
+      ((abs(this.position.x - blackBearPlayer.position.x) < 40 &&
+        abs(this.position.y - blackBearPlayer.position.y) < 20) ||
+        (abs(this.position.x - brownBearPlayer.position.x) < 40 &&
+          abs(this.position.y - brownBearPlayer.position.y) < 20)) &&
+      this.hitTimer == 0
+    ) {
+      livesLeft--;
+      this.hitTimer = 200;
+    }
   }
 }
