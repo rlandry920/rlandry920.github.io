@@ -28,6 +28,10 @@ class moveButton {
         brownBearPlayer.position.y < this.y &&
         this.y - brownBearPlayer.position.y < 25)
     ) {
+      //Play a sound to represent the button being clicked
+      if (!this.pressed) {
+        buttonClickNoise.play();
+      }
       this.pressed = true;
     } else {
       this.pressed = false;

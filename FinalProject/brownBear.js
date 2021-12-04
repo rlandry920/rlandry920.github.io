@@ -2,20 +2,22 @@
 class brownBear {
   constructor(x, y) {
     this.position = new p5.Vector(x, y);
-        //Change appearance based on which was it's moving
-
+    //Change appearance based on which was it's moving
     this.movingRight = false;
     this.movingLeft = false;
+    //The arms will swing when walking
     this.rightArmAngle = PI / 8;
-        this.rightArmDir = 1;
+    this.rightArmDir = 1;
     this.leftArmAngle = PI / 8;
-        this.leftArmDir = 1;
+    this.leftArmDir = 1;
     this.velocity = new p5.Vector(0, 0);
     this.acceleration = new p5.Vector(0, 0);
     this.force = new p5.Vector(0, 0);
     this.jump = 0;
     this.walkRight = 0;
     this.walkLeft = 0;
+    this.hitTimer = 0;
+    this.shouldDraw = true;
   }
 
   applyForce(force) {
@@ -24,6 +26,13 @@ class brownBear {
 
   //Move based on forces being applied
   update() {
+    if (this.hitTimer > 0) {
+      this.hitTimer--;
+      if (this.hitTimer % 10 == 0) {
+        this.shouldDraw = !this.shouldDraw;
+      }
+    }
+
     this.acceleration.set(0, 0);
     //Walk right
     if (this.walkRight === 1) {
@@ -47,22 +56,28 @@ class brownBear {
       this.applyForce(gravity);
     }
     this.velocity.add(this.acceleration);
+    if (startGame) {
+      this.checkWalls();
+    }
     this.position.add(this.velocity);
-    if(this.position.x < 20){
-      this.position.x += 5;
-    }else if(this.position.x > width-20){
-            this.position.x -= 5;
-
+    if (startGame) {
+      if (this.position.x < 20) {
+        this.position.x += 5;
+      } else if (this.position.x > maxPlayerX - 20) {
+        this.position.x -= 5;
+      }
     }
     this.acceleration.set(0, 0);
   }
 
   draw() {
+    strokeWeight(1);
+    //Draw walking right
     if (this.movingRight) {
       if (this.rightArmAngle >= PI / 8 || this.rightArmAngle <= -PI / 8) {
         this.rightArmDir = -this.rightArmDir;
-      } 
-      this.rightArmAngle += this.rightArmDir*PI/40
+      }
+      this.rightArmAngle += (this.rightArmDir * PI) / 40;
       noStroke();
       fill(151, 76, 53);
       //ear
@@ -128,11 +143,13 @@ class brownBear {
         this.position.x + 12,
         this.position.y - 5
       );
-    } else if (this.movingLeft) {
+    }
+    //Draw walking left
+    else if (this.movingLeft) {
       if (this.leftArmAngle >= PI / 8 || this.leftArmAngle <= -PI / 8) {
         this.leftArmDir = -this.leftArmDir;
-      } 
-      this.leftArmAngle += this.leftArmDir*PI/40
+      }
+      this.leftArmAngle += (this.leftArmDir * PI) / 40;
       noStroke();
       fill(151, 76, 53);
       //ear
@@ -164,7 +181,7 @@ class brownBear {
         this.position.y - 8,
         13,
         13,
-        
+
         -PI / 2,
         (3 * PI) / 8,
         PIE
@@ -199,7 +216,8 @@ class brownBear {
         this.position.x - 12,
         this.position.y - 5
       );
-    } else {
+    } //Draw standing forward
+    else {
       noStroke();
       fill(151, 76, 53);
       //legs
@@ -282,39 +300,97 @@ class brownBear {
         this.position.x + 8,
         this.position.y - 2
       );
+      strokeWeight(3);
+      if (currLevel == 1) {
+        bezier(
+          this.position.x - 15,
+          this.position.y - 20,
+          this.position.x - 5,
+          this.position.y - 35,
+          this.position.x + 5,
+          this.position.y - 35,
+          this.position.x + 15,
+          this.position.y - 20
+        );
+        strokeWeight(1);
+
+        fill(255, 0, 0);
+        noStroke();
+        ellipse(this.position.x - 15, this.position.y - 17, 15, 20);
+        ellipse(this.position.x + 15, this.position.y - 17, 15, 20);
+      }
     }
   }
-  
-    //Check to see if the player has hit any walls to the left or right
+
+  //Check to see if the player has hit any walls to the left or right
   //Also check to see if player is standing on a block
   checkWalls() {
-        var standing = false;
+    var standing = false;
 
     for (var i = 0; i < blocks[currLevel].length; i++) {
-      if (
-        (blocks[currLevel][i].y +20) >= (this.position.y + 30) &&
-        ((blocks[currLevel][i].y) - (this.position.y + 30)) < 0.5 &&
-        abs(blocks[currLevel][i].x+40 - this.position.x) < 41
-      ) {
-        if (this.velocity.y >= 0) {
-          this.position.y = blocks[currLevel][i].y - 30;
-          this.velocity.y = 0;
-          this.jump = 0;
-          standing = true;
+      if (currLevel == 0) {
+        //If the bear is currently standing on a wall
+        if (
+          blocks[currLevel][i].y + 20 >= this.position.y + 30 &&
+          blocks[currLevel][i].y - (this.position.y + 30) < 0.5 &&
+          abs(blocks[currLevel][i].x + 40 - this.position.x) < 41
+        ) {
+          if (this.velocity.y >= 0) {
+            this.position.y = blocks[currLevel][i].y - 30;
+            this.velocity.y = 0;
+            this.jump = 0;
+            standing = true;
+          }
         }
-      }
-      
-      if (
-        (blocks[currLevel][i].y +40) <= (this.position.y + 30) &&
-        ((this.position.y - 28)-(blocks[currLevel][i].y+40)) < 0.5 &&
-        abs(blocks[currLevel][i].x+40 - this.position.x) < 41
-      ) {
-        if (this.velocity.y <= 0) {
-          this.velocity.y = 0;
+        //If the bear is jumping in to a wall from below
+        if (
+          blocks[currLevel][i].y + 40 <= this.position.y + 30 &&
+          this.position.y - 28 - (blocks[currLevel][i].y + 40) < 0.5 &&
+          abs(blocks[currLevel][i].x + 40 - this.position.x) < 41
+        ) {
+          if (this.velocity.y <= 0) {
+            this.velocity.y = 0;
+          }
+        }
+      } else {
+        //If the bear is running in to a wall from the side
+        if (
+          abs(blocks[currLevel][i].y + 20 - this.position.y) < 30 &&
+          abs(blocks[currLevel][i].x + 20 - this.position.x) < 35
+        ) {
+          if (blocks[currLevel][i].x < this.position.x) {
+            this.position.x += 2;
+          } else {
+            this.position.x -= 2;
+          }
+          this.velocity.x = 0;
+        }
+        //If the bear is currently standing on a wall
+        else if (
+          blocks[currLevel][i].y + 20 >= this.position.y + 30 &&
+          blocks[currLevel][i].y - (this.position.y + 30) < 0.5 &&
+          abs(blocks[currLevel][i].x + 20 - this.position.x) < 25
+        ) {
+          if (this.velocity.y >= 0) {
+            this.position.y = blocks[currLevel][i].y - 30;
+            this.velocity.y = 0;
+            this.jump = 0;
+            standing = true;
+          }
+        }
+        //If the bear is jumping in to a wall from below
+        else if (
+          blocks[currLevel][i].y + 40 <= this.position.y + 30 &&
+          this.position.y - 28 - (blocks[currLevel][i].y + 40) < 0.5 &&
+          abs(blocks[currLevel][i].x + 20 - this.position.x) < 25
+        ) {
+          if (this.velocity.y <= 0) {
+            this.velocity.y = 0;
+          }
         }
       }
     }
-    //If not standing on a log, rall
+    //Fall if not standing on anything
     if (!standing) {
       this.jump = 1;
     }

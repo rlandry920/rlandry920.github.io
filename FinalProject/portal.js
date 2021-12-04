@@ -21,16 +21,24 @@ class portal {
   checkHit() {
     if (
       abs(this.x + 40 - blackBearPlayer.position.x) < 25 &&
-      abs(this.y + 40 - blackBearPlayer.position.y) < 20
+      abs(this.y + 40 - blackBearPlayer.position.y) < 20 &&
+      !blackBearPlayer.portal
     ) {
       blackBearPlayer.portal = true;
+      if (soundOn) {
+        whooshNoise.play();
+      }
     }
 
     if (
       abs(this.x + 40 - brownBearPlayer.position.x) < 25 &&
-      abs(this.y + 40 - brownBearPlayer.position.y) < 20
+      abs(this.y + 40 - brownBearPlayer.position.y) < 20 &&
+      !brownBearPlayer.portal
     ) {
       brownBearPlayer.portal = true;
+      if (soundOn) {
+        whooshNoise.play();
+      }
     }
   }
 }

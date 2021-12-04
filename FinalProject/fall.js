@@ -1,10 +1,11 @@
 var slideLog1, slideLog2;
 var slideOpenButton1;
-var buttons;
+var fallButtons;
 var leafTokens;
 var fallRabbits;
 var fallPortal;
 var fallScore;
+var fallPortalOpen;
 
 //Init variables for fall level
 function setupFall() {
@@ -22,17 +23,17 @@ function setupFall() {
   woodBlocks.push(upLog2);
 
   //Create buttons for the level
-  buttons = [];
+  fallButtons = [];
   slideOpenButton1 = new moveButton(350, 652.5, color(255, 0, 0));
   slideOpenButton2 = new moveButton(100, 532.5, color(255, 0, 0));
 
   upButton1 = new moveButton(750, 172.5, color(0, 255, 0));
   upButton2 = new moveButton(200, 412.5, color(0, 255, 0));
 
-  buttons.push(slideOpenButton1);
-  buttons.push(slideOpenButton2);
-  buttons.push(upButton1);
-  buttons.push(upButton2);
+  fallButtons.push(slideOpenButton1);
+  fallButtons.push(slideOpenButton2);
+  fallButtons.push(upButton1);
+  fallButtons.push(upButton2);
 
   //Create portal for the level in the top left hand corner
   fallPortal = new portal(10, 30);
@@ -40,10 +41,15 @@ function setupFall() {
 
   leafTokens = [];
 
+  //The player's x can not be greater than 800
+  maxPlayerX = 800;
+
   //Create rabbits for the level
   fallRabbits = [];
   fallRabbits.push(new rabbit(100, 382, 1, 15, 220));
   fallRabbits.push(new rabbit(600, 382, -1, 490, width - 15));
+
+  fallPortalOpen = false;
 }
 
 function drawFall() {
@@ -66,8 +72,11 @@ function drawFallLevel() {
     fill(255);
     text("LEVEL 1 - FALL", 180, 350);
     strokeWeight(1);
-    let block = new woodBlock(200, 200);
   } else {
+    //Play jungle music
+    if (!jungleNoise.isPlaying() && soundOn) {
+      jungleNoise.play();
+    }
     //Draw level after
     fallLevelCount++;
     if (!gameTimerStarted) {
@@ -78,6 +87,7 @@ function drawFallLevel() {
     //Decrease timer for the game
     if (fallLevelCount % 60 == 0) {
       gameTimer--;
+      checkTime();
     }
     //Draw logs
     for (i = 0; i < woodBlocks.length; i++) {
@@ -91,9 +101,9 @@ function drawFallLevel() {
       }
     }
     //Draw buttons
-    for (i = 0; i < buttons.length; i++) {
-      buttons[i].draw();
-      buttons[i].checkHit();
+    for (i = 0; i < fallButtons.length; i++) {
+      fallButtons[i].draw();
+      fallButtons[i].checkHit();
     }
 
     //Draw rabbits
@@ -105,21 +115,24 @@ function drawFallLevel() {
 
     //Draw brown bear if it hasn't already gone through the portal
     if (!brownBearPlayer.portal) {
-      brownBearPlayer.draw();
+      if (brownBearPlayer.hitTimer == 0 || brownBearPlayer.shouldDraw) {
+        brownBearPlayer.draw();
+      }
       brownBearPlayer.update();
-
-      brownBearPlayer.checkWalls();
     }
 
     //Draw black bear if it hasn't already gone through the portal
     if (!blackBearPlayer.portal) {
-      blackBearPlayer.draw();
+      if (blackBearPlayer.hitTimer == 0 || blackBearPlayer.shouldDraw) {
+        blackBearPlayer.draw();
+      }
       blackBearPlayer.update();
-      blackBearPlayer.checkWalls();
     }
 
     drawTimer();
     drawLives();
+    checkTime();
+    checkLives();
 
     //Move logs
     if (
@@ -148,11 +161,28 @@ function drawFallLevel() {
     if (fallScore == leafTokens.length) {
       fallPortal.draw();
       fallPortal.checkHit();
+      if (!fallPortalOpen) {
+        if (soundOn) {
+          portalOpenNoise.play();
+        }
+        fallPortalOpen = true;
+      }
     }
 
     //Go to next level after both bears have entered the portal
+    //Reset everything before next level
     if (brownBearPlayer.portal && blackBearPlayer.portal) {
       currLevel++;
+      maxPlayerX = 1200;
+      blackBearPlayer.position.x = 30;
+      blackBearPlayer.position.y = height - 75;
+      brownBearPlayer.position.x = 80;
+      brownBearPlayer.position.y = height - 75;
+      blackBearPlayer.hitTimer = 0;
+      brownBearPlayer.hitTimer = 0;
+      blackBearPlayer.portal = false;
+      brownBearPlayer.portal = false;
+      jungleNoise.stop();
     }
   }
 }

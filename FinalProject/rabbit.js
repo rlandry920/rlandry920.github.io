@@ -1,11 +1,10 @@
+//This class represents the rabbits that are in the fall level
 class rabbit {
   constructor(x, y, speed, minX, maxX) {
     this.position = new p5.Vector(x, y);
     this.speed = speed;
     this.minX = minX;
     this.maxX = maxX;
-    //The timer insures that the user doesn't lose all 3 lives instantly
-    this.hitTimer = 0;
   }
 
   draw() {
@@ -71,18 +70,27 @@ class rabbit {
   //Check to see if either player hit the rabbit
   //If so, the user loses a life
   checkHit() {
-    if (this.hitTimer > 0) {
-      this.hitTimer--;
-    }
     if (
-      ((abs(this.position.x - blackBearPlayer.position.x) < 40 &&
-        abs(this.position.y - blackBearPlayer.position.y) < 20) ||
-        (abs(this.position.x - brownBearPlayer.position.x) < 40 &&
-          abs(this.position.y - brownBearPlayer.position.y) < 20)) &&
-      this.hitTimer == 0
+      abs(this.position.x - blackBearPlayer.position.x) < 40 &&
+      abs(this.position.y - blackBearPlayer.position.y) < 20 &&
+      blackBearPlayer.hitTimer == 0
     ) {
       livesLeft--;
-      this.hitTimer = 200;
+      blackBearPlayer.hitTimer = 200;
+      if (soundOn) {
+        gruntNoise.play();
+      }
+    }
+    if (
+      abs(this.position.x - brownBearPlayer.position.x) < 40 &&
+      abs(this.position.y - brownBearPlayer.position.y) < 20 &&
+      brownBearPlayer.hitTimer == 0
+    ) {
+      livesLeft--;
+      brownBearPlayer.hitTimer = 200;
+      if (soundOn) {
+        gruntNoise.play();
+      }
     }
   }
 }

@@ -29,6 +29,9 @@ class leaf {
     ) {
       this.hit = true;
       fallScore++;
+      if (soundOn) {
+        leafCrunchNoise.play();
+      }
     }
   }
 }

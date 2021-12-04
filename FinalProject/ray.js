@@ -30,4 +30,20 @@ class ray {
       this.x = random((3 * width) / 4 + 10, width - 10);
     }
   }
+
+  //If either bear runs into the ray, it disappears and the score goes up by 1
+  checkHit() {
+    if (
+      (abs(this.x - blackBearPlayer.position.x) < 35 &&
+        abs(this.y - blackBearPlayer.position.y) < 30) ||
+      (abs(this.x - brownBearPlayer.position.x) < 35 &&
+        abs(this.y - brownBearPlayer.position.y) < 30)
+    ) {
+      this.hit = true;
+      summerScore++;
+      if (soundOn) {
+        sizzleNoise.play();
+      }
+    }
+  }
 }
